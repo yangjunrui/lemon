@@ -1,5 +1,6 @@
 (ns lemon.server
-  (:require [noir.server :as server]))
+    (:require [noir.server :as server])
+    (:gen-class))
 
 (server/load-views-ns 'lemon.views)
 
