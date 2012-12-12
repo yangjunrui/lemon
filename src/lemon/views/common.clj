@@ -6,15 +6,15 @@
             (html5
               [:head
                [:title title]
+               [:link {:rel "icon" :href "/lemon.png"}]
                (include-css "/css/bootstrap.min.css")
                (include-css "/css/bootstrap-responsive.min.css")
                (include-js "/js/jquery-1.8.3.min.js")
                (include-js "/js/bootstrap.min.js")
                (include-js "/js/jquery.tablesorter.js")
                (include-js "/js/lemon.js")]
-              [:body
-               [:div#wrapper
-                content]]))
+              [:body {:style "padding-top: 45px;"}
+               content]))
 
 (defpartial index-layout [& content]
             (html5
@@ -22,6 +22,6 @@
                  [:title "Welcome to Lemon"]
                  (include-css "/css/bootstrap.min.css")
                  (include-css "/css/bootstrap-responsive.min.css")
-                 (include-js "/js/jquery.tablesorter.js")
+                 (include-js "/js/jquery-1.8.3.min.js")
                  (include-js "/js/bootstrap.min.js")]
                 [:body]))

@@ -24,7 +24,7 @@ function UpdateTableHeaders() {
     });
 }
 $(function () {
-    $('#mytab a:first').tab('show');
+    //$('#mytab a:first').tab('show');
     $('#engines div:first').addClass('active');
     $("#area-statistics").tablesorter();
     $("#ds-statistics").tablesorter();
