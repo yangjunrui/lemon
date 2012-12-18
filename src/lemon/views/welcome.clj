@@ -162,6 +162,8 @@
                      [:th "per-size"]
                      [:th "use-size"]
                      [:th "quota"]]]
+                   [:div {:type "text" :style "position: fixed; left: 5px; top: 45px; width: 100px;"}
+                    (text-field {:class "input-mini" :placeholder "area"} "area-filter")]
                    "<tr></tr>"]])))
 (defpartial query-fields [{:keys [qstr result]}]
             [:div.control-group
