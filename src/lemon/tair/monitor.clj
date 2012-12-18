@@ -5,6 +5,8 @@
              [com.taobao.tair.extend.impl DefaultExtendTairManager])
     )
 
+(defonce global-statistics (atom {}))
+
 (defn- connect-to-tair
     ([cs-list group]
      (let [tair (DefaultTairManager.)
@@ -69,4 +71,7 @@
            cap (get-ns-capacity tair)
            merged (merge-with #(assoc %1 "quota" %2) st cap)]
          (into (sorted-map) (remove #(number? (second %)) merged)))))
-
+(defn get-status-of-ns-by-range
+    [tair start-ns end-ns]
+    (into (sorted-map) (select-keys (get-status-of-all-ns tair)
+                 (range start-ns (inc end-ns)))))

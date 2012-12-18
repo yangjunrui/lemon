@@ -2,6 +2,7 @@
   (:require [lemon.views.common :as common]
             [lemon.tair.monitor :as monitor]
             [lemon.tair.clusters :as clusters]
+            [cheshire.core :as json]
             [noir.content.getting-started])
   (:use [noir.core :only [defpage defpartial render]]
         [hiccup.form]
@@ -16,7 +17,7 @@
 
 (defpartial post-cluster-table [eng]
             [:div.tab-pane.fade.in {:id (name eng)}
-             [:table.table.table-hover.table-striped
+             [:table.table.table-hover.table-striped.table-condensed
               [:thead [:tr [:th "Cluster"] [:th "Master"] [:th "Slave"] [:th "Group Name"]]]
               (map post-cluster-row (clusters/clusters eng))]])
 
@@ -93,7 +94,7 @@
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
                       ]]]]]
                  [:div.container
-                  [:table.table.table-hover.table-striped.tableWithFloatingHeader.tablesorter {:id "ds-statistics"}
+                  [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "ds-statistics"}
                    [:thead
                     [:tr
                      [:th "DataServer"]
@@ -146,7 +147,7 @@
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
                       ]]]]]
                  [:div.container
-                  [:table.table.table-hover.table-striped.tableWithFloatingHeader.tablesorter {:id "area-statistics"}
+                  [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "area-statistics"}
                    [:thead
                     [:tr
                      [:th "Area"]
@@ -161,7 +162,7 @@
                      [:th "per-size"]
                      [:th "use-size"]
                      [:th "quota"]]]
-                   (map post-ns-row ns-st-map)]])))
+                   "<tr></tr>"]])))
 (defpartial query-fields [{:keys [qstr result]}]
             [:div.control-group
              [:div.control-label (label "qstr" "Query: ")]
@@ -199,3 +200,8 @@
                                (use 'lemon.views.welcome)
                                (query-fields (assoc query :result (eval (read-string (:qstr query)))))))
                        )]))
+(defpage [:get "/monitor/area-json"] {:keys [eng cluster-name start-ns end-ns]}
+         (json/generate-string (monitor/get-status-of-ns-by-range
+                  (monitor/get-tair eng cluster-name)
+                  (Integer. start-ns)
+                  (Integer. end-ns))))
