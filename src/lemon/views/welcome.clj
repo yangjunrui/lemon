@@ -104,8 +104,6 @@
                      [:th "use-size"]]]
                    (map post-ds-row ds-st-map)]])))
 (defpage [:get "/monitor/:eng/:cluster-name/area"] {:keys [eng cluster-name]}
-         (let [tair (monitor/get-tair eng cluster-name)
-               ns-st-map (monitor/get-status-of-all-ns tair)]
              (common/layout
                  "Area Statistics"
                  (header-layout
@@ -135,13 +133,25 @@
                      [:th "per-size"]
                      [:th "use-size"]
                      [:th "quota"]]]
-                   "<tr></tr>"]])))
+                   "<tr></tr>"]]))
 (defpartial guru-fields []
             [:div.control-group
              [:div.control-label (label "qstr" "Query: ")]
              [:div.controls (text-field
                                 {:class "input-xxlarge"
-                                 :placeholder "Enter Clojure query sentence here, e.g. (.get tair 0 \"key\")"} "qstr" )]]
+                                 :list "qstrs"
+                                 :placeholder "Enter Clojure query sentence here, e.g. (.get tair 0 \"key\")"} "qstr" )
+              [:datalist {:id "qstrs"}
+               [:option {:value "(.get tair 0 \"key\")"}]
+               [:option {:value "(.put tair 0 \"key\" \"value\")"}]
+               [:option {:value "(.delete tair \"key\")"}]
+               [:option {:value "(.incr tair 0 \"key\" 1 0 0)"}]
+               [:option {:value "(.decr tair 0 \"key\" 1 0 0)"}]
+               [:option {:value "(.prefixGet tair 0 \"pkey\" \"skey\")"}]
+               [:option {:value "(.prefixPut tair 0 \"pkey\" \"skey\" \"value\")"}]
+               [:option {:value "(.prefixDelete tair 0 \"pkey\" \"skey\")"}]
+               [:option {:value "(.prefixIncr tair 0 \"pkey\" \"skey\" 1 0 0)"}]
+               ]]]
             [:div.control-group
              [:div.control-label (label "guru-result" "Result: ")]
              [:div.controls (text-area {:rows 8 :class "field span6"
