@@ -178,19 +178,19 @@
               [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
               [:div.tabbable.tabs-left
                [:ul.nav.nav-tabs
-                [:li.active
-                 [:a {:href "#guru" :data-toggle "tab"} "Guru"]]
                 [:li
+                 [:a {:href "#guru" :data-toggle "tab"} "Guru"]]
+                [:li.active
                  [:a {:href "#dummy" :data-toggle "tab"} "Dummy"]]
                 [:li
                  [:a {:href "#help" :data-toggle "tab"} "Help"]]]
                [:div.tab-content
-                [:div.tab-pane.fade.in.active {:id "guru"}
+                [:div.tab-pane.fade.in {:id "guru"}
                  (form-to {:class "form-horizontal" :id "guru-form"}
                           [:get "#"]
                           (guru-fields)
                           )]
-                [:div.tab-pane.fade.in {:id "dummy"}
+                [:div.tab-pane.fade.in.active {:id "dummy"}
                  (form-to {:class "form-horizontal" :id "dummy-form"}
                           [:get "#"]
                           (dummy-fields))]

@@ -14,7 +14,6 @@ $('#guru-form').submit(function() {
 });
 
 $('#dummy-form').submit(function() {
-    alert($("#area").val() + $("#key").val());
     $.ajax({
         url: '/monitor/query', 
     data: 'qstr=' + encodeURIComponent("(.get tair " +
