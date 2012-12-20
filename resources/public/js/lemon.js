@@ -19,7 +19,6 @@ function UpdateTableHeaders() {
         }
         else {
             floatingHeaderRow.css("visibility", "hidden");
-            floatingHeaderRow.css("top", "0px");
         }
     });
 }
@@ -37,7 +36,7 @@ $(function () {
 
         clonedHeaderRow.addClass("tableFloatingHeader");
     clonedHeaderRow.css("position", "absolute");
-    clonedHeaderRow.css("top", "0px");
+    clonedHeaderRow.css("top", "45px");
     clonedHeaderRow.css("left", $(this).css("margin-left"));
     clonedHeaderRow.css("visibility", "hidden");
 
@@ -46,12 +45,12 @@ $(function () {
     UpdateTableHeaders();
     $(window).scroll(UpdateTableHeaders);
     $(window).resize(UpdateTableHeaders);
-    var m = { "0": { "get": 20, "put": 30},
-        "1": { "get" : 10, "put": 40}};
-    "http://10.232.36.98:8080/monitor/mdb/mcomm-daily/area-json?start-ns=0&end-ns=1023";
     $.ajax({
-        url: 'http://10.232.36.98:8080/monitor/area-json?eng=mdb&cluster-name=mcomm-daily&start-ns=0&end-ns=1023', 
+        url: '/monitor/area-json', 
         data: 'start-ns=0&end-ns=1023',
+        data: 'start-ns=0&end-ns=1023' +
+                '&eng=' + encodeURIComponent($("#eng-type").val()) +
+                '&cluster-name=' + encodeURIComponent($("#cluster-name").val()),
         dataType: 'json',
         success: function(json) {
             $.each(json, function(i, stm) {
@@ -70,6 +69,7 @@ $(function () {
                     "<td>" + stm["quota"] + "</td>" +
                     "</tr>");
             })
-            }
-            });
+        }
+    });
+    setInterval(function () { if (!$("#area-filter").val()) {$("#area-filter").val(0); return ;}$("#area-filter").val(parseInt($("#area-filter").val()) + 1);}, 1000);
 })

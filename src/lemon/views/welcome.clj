@@ -145,8 +145,11 @@
                       [:li [:a {:href (format "/monitor/%s/%s/dataserver" eng cluster-name)} "DataServer"]]
                       [:li.active [:a {:href (format "/monitor/%s/%s/area" eng cluster-name)} "Area"]]
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
-                      ]]]]]
+                      ]]
+                    [:form.navbar-search.pull-right
+                     [:input.span1.search-query {:placeholder "area" :id "area-filter"}]]]]]
                  [:div.container
+                  [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
                   [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "area-statistics"}
                    [:thead
                     [:tr
@@ -162,12 +165,19 @@
                      [:th "per-size"]
                      [:th "use-size"]
                      [:th "quota"]]]
-                   [:div {:type "text" :style "position: fixed; left: 5px; top: 45px; width: 100px;"}
-                    (text-field {:class "input-mini" :placeholder "area"} "area-filter")]
                    "<tr></tr>"]])))
-(defpartial query-fields [{:keys [qstr result]}]
+(defpartial guru-fields []
             [:div.control-group
              [:div.control-label (label "qstr" "Query: ")]
+             [:div.controls (text-field {:class "input-xxlarge"} "qstr" )]]
+            [:div.control-group
+             [:div.control-label (label "guru-result" "Result: ")]
+             [:div.controls (text-area {:rows 8 :class "field span6"} "guru-result")]]
+            [:div.control-group
+             [:div.controls (submit-button {:id "guru-submit"} "Query")]])
+(defpartial dummy-fields [{:keys [qstr result]}]
+            [:div.control-group
+             [:div.control-label (label "qstr" "key ")]
              [:div.controls (text-field {:class "input-xxlarge"} "qstr" qstr)]]
             [:div.control-group
              [:div.control-label (label "result" "Result: ")]
@@ -176,7 +186,7 @@
              [:div.controls (submit-button "Query")]])
 (defpage [:get "/monitor/:eng/:cluster-name/query"] {:keys [eng cluster-name] :as query}
          (def tair (monitor/get-tair eng cluster-name))
-         (common/layout
+         (common/query-layout
              (str "Query in " cluster-name)
              [:div.navbar.navbar-inverse.navbar-fixed-top
               [:div.navbar-inner
@@ -194,14 +204,28 @@
                   [:li.active [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
                   ]]]]]
              [:div.container
-              (form-to {:class "form-horizontal"}
-                       [:get (format "/monitor/%s/%s/query" eng cluster-name)]
-                       (if (nil? (:qstr query))
-                           (query-fields query)
-                           (do
-                               (use 'lemon.views.welcome)
-                               (query-fields (assoc query :result (eval (read-string (:qstr query)))))))
-                       )]))
+              [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
+              [:div.tabbable.tabs-left
+               [:ul.nav.nav-tabs
+                [:li.active
+                 [:a {:href "#guru" :data-toggle "tab"} "Guru"]]
+                [:li
+                 [:a {:href "#dummy" :data-toggle "tab"} "Dummy"]]]
+               [:div.tab-content
+                [:div.tab-pane.active {:id "guru"}
+                 (form-to {:class "form-horizontal" :id "guru-form"}
+                          [:get (format "/monitor/%s/%s/query" eng cluster-name)]
+                          (guru-fields)
+                          )]
+                [:div.tab-pane {:id "dummy"} "dummy"
+                 ]]]]))
+
+;;; restful-related
+(defpage [:get "/monitor/query"] {:keys [eng cluster-name qstr] :as query}
+         (def tair (monitor/get-tair eng cluster-name))
+         (do
+             (use 'lemon.views.welcome)
+             (str (eval (read-string qstr)))))
 (defpage [:get "/monitor/area-json"] {:keys [eng cluster-name start-ns end-ns]}
          (json/generate-string (monitor/get-status-of-ns-by-range
                   (monitor/get-tair eng cluster-name)
