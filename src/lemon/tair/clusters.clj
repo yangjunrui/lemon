@@ -6,10 +6,10 @@
                       :slave "10.232.12.142:5198"
                       :group "group_1"
                       :engine "mdb"}
-                     {:name "omm-daily"
-                      :master "10.232.12.141:5198"
-                      :slave "10.232.12.142:5198"
-                      :group "group_1"
+                     {:name "mdbcomm-daily"
+                      :master "10.235.144.191:5198"
+                      :slave "10.235.144.192:5198"
+                      :group "group_mdbcomm"
                       :engine "mdb"}
                      {:name "mm-daily"
                       :master "10.232.12.141:5198"

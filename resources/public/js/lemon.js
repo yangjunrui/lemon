@@ -25,8 +25,6 @@ function UpdateTableHeaders() {
 $(function () {
     //$('#mytab a:first').tab('show');
     $('#engines div:first').addClass('active');
-    //$("#area-statistics").tablesorter();
-    $("#ds-statistics").tablesorter();
     $("table.tableWithFloatingHeader").each(function() {
         $(this).wrap("<div class=\"divTableWithFloatingHeader\" style=\"position:relative\"></div>");
 
@@ -68,8 +66,10 @@ $(function () {
                     "<td>" + stm["useSize"] + "</td>" +
                     "<td>" + stm["quota"] + "</td>" +
                     "</tr>");
-            })
+            });
         }
     });
+    $("#area-statistics").tablesorter();
+    $("#ds-statistics").tablesorter();
     setInterval(function () { if (!$("#area-filter").val()) {$("#area-filter").val(0); return ;}$("#area-filter").val(parseInt($("#area-filter").val()) + 1);}, 1000);
 })

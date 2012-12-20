@@ -169,23 +169,31 @@
 (defpartial guru-fields []
             [:div.control-group
              [:div.control-label (label "qstr" "Query: ")]
-             [:div.controls (text-field {:class "input-xxlarge"} "qstr" )]]
+             [:div.controls (text-field
+                                {:class "input-xxlarge"
+                                 :placeholder "Enter Clojure query sentence here, e.g. (.get tair 0 \"key\")"} "qstr" )]]
             [:div.control-group
              [:div.control-label (label "guru-result" "Result: ")]
-             [:div.controls (text-area {:rows 8 :class "field span6"} "guru-result")]]
+             [:div.controls (text-area {:rows 8 :class "field span6"
+                                        :placeholder "Result would be displayed here, if no exception occurs."} "guru-result")]])
+(defpartial dummy-fields []
+            [:div.control-group
+             [:div.control-label (label "area" "Area: ")]
+             [:div.controls (text-field
+                                {:class "input-large"
+                                 :placeholder "area"} "area" )]]
+            [:div.control-group
+             [:div.control-label (label "key" "Key: ")]
+             [:div.controls (text-field
+                                {:class "input-xxlarge"
+                                 :placeholder "e.g. \"key\", 123, (short 123), (long 123)"} "key" )]]
+            [:div.control-group
+             [:div.control-label (label "dummy-result" "Result: ")]
+             [:div.controls (text-area {:rows 8 :class "field span6"
+                                        :placeholder "Result would be displayed here, if no exception occurs."} "dummy-result")]]
             [:div.control-group
              [:div.controls (submit-button {:id "guru-submit"} "Query")]])
-(defpartial dummy-fields [{:keys [qstr result]}]
-            [:div.control-group
-             [:div.control-label (label "qstr" "key ")]
-             [:div.controls (text-field {:class "input-xxlarge"} "qstr" qstr)]]
-            [:div.control-group
-             [:div.control-label (label "result" "Result: ")]
-             [:div.controls (text-area {:rows 8 :class "field span6"} "result" result)]]
-            [:div.control-group
-             [:div.controls (submit-button "Query")]])
 (defpage [:get "/monitor/:eng/:cluster-name/query"] {:keys [eng cluster-name] :as query}
-         (def tair (monitor/get-tair eng cluster-name))
          (common/query-layout
              (str "Query in " cluster-name)
              [:div.navbar.navbar-inverse.navbar-fixed-top
@@ -210,14 +218,22 @@
                 [:li.active
                  [:a {:href "#guru" :data-toggle "tab"} "Guru"]]
                 [:li
-                 [:a {:href "#dummy" :data-toggle "tab"} "Dummy"]]]
+                 [:a {:href "#dummy" :data-toggle "tab"} "Dummy"]]
+                [:li
+                 [:a {:href "#help" :data-toggle "tab"} "Help"]]]
                [:div.tab-content
-                [:div.tab-pane.active {:id "guru"}
+                [:div.tab-pane.fade.in.active {:id "guru"}
                  (form-to {:class "form-horizontal" :id "guru-form"}
                           [:get (format "/monitor/%s/%s/query" eng cluster-name)]
                           (guru-fields)
                           )]
-                [:div.tab-pane {:id "dummy"} "dummy"
+                [:div.tab-pane.fade.in {:id "dummy"}
+                 (form-to {:class "form-horizontal" :id "dummy-form"}
+                          [:get "#"]
+                          (dummy-fields))]
+                [:div.tab-pane.fade.in {:id "help"}
+                 [:p "You could only perform `get' request in the dummy mode, while the type of key being constrained, such as String, Integer, Long, Double, etc."]
+                 [:p "When in guru mode, you could launch any request that `tair-client' supports."]
                  ]]]]))
 
 ;;; restful-related

@@ -12,4 +12,20 @@ $('#guru-form').submit(function() {
     });
     return false;
 });
+
+$('#dummy-form').submit(function() {
+    alert($("#area").val() + $("#key").val());
+    $.ajax({
+        url: '/monitor/query', 
+    data: 'qstr=' + encodeURIComponent("(.get tair " +
+        $("#area").val() + " " + $("#key").val() + ")") +
+        '&eng=' + encodeURIComponent($("#eng-type").val()) +
+        '&cluster-name=' + encodeURIComponent($("#cluster-name").val()),
+    dataType: 'text',
+    success: function(text) {
+        $("#dummy-result").val(text);
+    }
+    });
+    return false;
+});
 })
