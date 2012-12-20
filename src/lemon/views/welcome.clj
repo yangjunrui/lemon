@@ -21,20 +21,23 @@
               [:thead [:tr [:th "Cluster"] [:th "Master"] [:th "Slave"] [:th "Group Name"]]]
               (map post-cluster-row (clusters/clusters eng))]])
 
+(defpartial header-layout [& content]
+            [:div.navbar.navbar-inverse.navbar-fixed-top
+             [:div.navbar-inner
+              [:div.container
+               [:a.btn.btn-navbar {:data-toggle "collapse" :data-target ".nav-collapse"}
+                [:span.icon-bar]
+                [:span.icon-bar]
+                [:span.icon-bar]]
+               [:a.brand {:href "/"} "Lemon"]
+                content]]])
 (defpage "/" []
          (common/layout
              "Welcome to Lemon"
-             [:div.navbar.navbar-inverse.navbar-fixed-top
-              [:div.navbar-inner
-               [:div.container
-                [:a.btn.btn-navbar {:data-toggle "collapse" :data-target ".nav-collapse"}
-                 [:span.icon-bar]
-                 [:span.icon-bar]
-                 [:span.icon-bar]]
-                [:a.brand {:href "/"} "Lemon"]
-                [:div.nav-collapse.collapse
+             (header-layout
+               [:div.nav-collapse.collapse
                  [:ul.nav
-                  [:li.active [:a {:href "/"} "Home"]]]]]]]
+                  [:li.active [:a {:href "/"} "Home"]]]])
              [:div.container
               [:div
                [:ul#mytab.nav.nav-tabs
@@ -71,28 +74,19 @@
                  [:td (commify-num dataSize)]
                  [:td (commify-num (if (zero? itemCount) 0 (quot dataSize itemCount)))]
                  [:td (commify-num useSize)]]))
-(defpage [:get "/monitor/:eng/:cluster-name"] {:keys [eng cluster-name] :as query}
-         (render [:get (format "/monitor/%s/%s/dataserver" eng cluster-name)] query))
 (defpage [:get "/monitor/:eng/:cluster-name/dataserver"] {:keys [eng cluster-name]}
          (let [tair (monitor/get-tair eng cluster-name)
                ds-st-map (monitor/get-status-of-all-ds tair)]
              (common/layout
                  "DataServer Statistics"
-                 [:div.navbar.navbar-inverse.navbar-fixed-top
-                  [:div.navbar-inner
-                   [:div.container
-                    [:a.btn.btn-navbar {:data-toggle "collapse" :data-target ".nav-collapse"}
-                     [:span.icon-bar]
-                     [:span.icon-bar]
-                     [:span.icon-bar]]
-                    [:a.brand {:href "/"} "Lemon"]
-                    [:div.nav-collapse.collapse
+                 (header-layout
+                     [:div.nav-collapse.collapse
                      [:ul.nav
                       [:li [:a {:href "/"} "Home"]]
                       [:li.active [:a {:href (format "/monitor/%s/%s/dataserver" eng cluster-name)} "DataServer"]]
                       [:li [:a {:href (format "/monitor/%s/%s/area" eng cluster-name)} "Area"]]
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
-                      ]]]]]
+                      ]])
                  [:div.container
                   [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "ds-statistics"}
                    [:thead
@@ -109,36 +103,12 @@
                      [:th "per-size"]
                      [:th "use-size"]]]
                    (map post-ds-row ds-st-map)]])))
-(defpartial post-ns-row [[area area-map]]
-            (let [
-                  {:strs [getCount putCount hitCount removeCount evictCount itemCount dataSize useSize quota]}
-                  area-map]
-                [:tr
-                 [:td area]
-                 [:td getCount]
-                 [:td hitCount]
-                 [:td (if (zero? getCount) 0.0 (format "%.2f" (float (/ hitCount getCount))))]
-                 [:td putCount]
-                 [:td removeCount]
-                 [:td (if (zero? evictCount) evictCount [:span.label.label-warning evictCount])]
-                 [:td (commify-num itemCount)]
-                 [:td (commify-num dataSize)]
-                 [:td (commify-num (if (or (nil? itemCount) (zero? itemCount)) 0 (quot dataSize itemCount)))]
-                 [:td (commify-num useSize)]
-                 [:td (commify-num (if (nil? quota) -1 quota))]]))
 (defpage [:get "/monitor/:eng/:cluster-name/area"] {:keys [eng cluster-name]}
          (let [tair (monitor/get-tair eng cluster-name)
                ns-st-map (monitor/get-status-of-all-ns tair)]
              (common/layout
                  "Area Statistics"
-                 [:div.navbar.navbar-inverse.navbar-fixed-top
-                  [:div.navbar-inner
-                   [:div.container
-                    [:a.btn.btn-navbar {:data-toggle "collapse" :data-target ".nav-collapse"}
-                     [:span.icon-bar]
-                     [:span.icon-bar]
-                     [:span.icon-bar]]
-                    [:a.brand {:href "/"} "Lemon"]
+                 (header-layout
                     [:div.nav-collapse.collapse
                      [:ul.nav
                       [:li [:a {:href "/"} "Home"]]
@@ -147,7 +117,7 @@
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
                       ]]
                     [:form.navbar-search.pull-right
-                     [:input.span1.search-query {:placeholder "area" :id "area-filter"}]]]]]
+                     [:input.span1.search-query {:placeholder "area" :id "area-filter"}]])
                  [:div.container
                   [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
                   [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "area-statistics"}
@@ -196,21 +166,14 @@
 (defpage [:get "/monitor/:eng/:cluster-name/query"] {:keys [eng cluster-name] :as query}
          (common/query-layout
              (str "Query in " cluster-name)
-             [:div.navbar.navbar-inverse.navbar-fixed-top
-              [:div.navbar-inner
-               [:div.container
-                [:a.btn.btn-navbar {:data-toggle "collapse" :data-target ".nav-collapse"}
-                 [:span.icon-bar]
-                 [:span.icon-bar]
-                 [:span.icon-bar]]
-                [:a.brand {:href "/"} "Lemon"]
+             (header-layout
                 [:div.nav-collapse.collapse
                  [:ul.nav
                   [:li [:a {:href "/"} "Home"]]
                   [:li [:a {:href (format "/monitor/%s/%s/dataserver" eng cluster-name)} "DataServer"]]
                   [:li [:a {:href (format "/monitor/%s/%s/area" eng cluster-name)} "Area"]]
                   [:li.active [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
-                  ]]]]]
+                  ]])
              [:div.container
               [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
               [:div.tabbable.tabs-left
@@ -224,7 +187,7 @@
                [:div.tab-content
                 [:div.tab-pane.fade.in.active {:id "guru"}
                  (form-to {:class "form-horizontal" :id "guru-form"}
-                          [:get (format "/monitor/%s/%s/query" eng cluster-name)]
+                          [:get "#"]
                           (guru-fields)
                           )]
                 [:div.tab-pane.fade.in {:id "dummy"}
