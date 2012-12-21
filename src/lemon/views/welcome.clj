@@ -77,7 +77,7 @@
 (defpage [:get "/monitor/:eng/:cluster-name/dataserver"] {:keys [eng cluster-name]}
          (let [tair (monitor/get-tair eng cluster-name)
                ds-st-map (monitor/get-status-of-all-ds tair)]
-             (common/layout
+             (common/ds-layout
                  "DataServer Statistics"
                  (header-layout
                      [:div.nav-collapse.collapse
@@ -104,7 +104,7 @@
                      [:th "use-size"]]]
                    (map post-ds-row ds-st-map)]])))
 (defpage [:get "/monitor/:eng/:cluster-name/area"] {:keys [eng cluster-name]}
-             (common/layout
+             (common/ns-layout
                  "Area Statistics"
                  (header-layout
                     [:div.nav-collapse.collapse
