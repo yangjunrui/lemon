@@ -114,8 +114,8 @@
                       [:li.active [:a {:href (format "/monitor/%s/%s/area" eng cluster-name)} "Area"]]
                       [:li [:a {:href (format "/monitor/%s/%s/query" eng cluster-name)} "Query"]]
                       ]]
-                    [:form.navbar-search.pull-right
-                     [:input.span1.search-query {:placeholder "area" :id "area-filter"}]])
+                    [:form.navbar-search.pull-right {:onsubmit "return false"}
+                     [:input.span1.search-query {:autofocus "autofocus" :placeholder "area" :id "area-filter" :oninput "update_ns()"}]])
                  [:div.container
                   [:div.hide [:input {:id "eng-type" :value eng}] [:input {:id "cluster-name" :value cluster-name}]]
                   [:table.table.table-hover.table-striped.table-condensed.tableWithFloatingHeader.tablesorter {:id "area-statistics"}
@@ -138,8 +138,8 @@
             [:div.control-group
              [:div.control-label (label "qstr" "Query: ")]
              [:div.controls (text-field
-                                {:class "input-xxlarge"
-                                 :list "qstrs"
+                                {:class "input-xxlarge" :required "required"
+                                 :list "qstrs" :autofocus "autofocus" :pattern "\\(.*\\)"
                                  :placeholder "Enter Clojure query sentence here, e.g. (.get tair 0 \"key\")"} "qstr" )
               [:datalist {:id "qstrs"}
                [:option {:value "(.get tair 0 \"key\")"}]
@@ -159,13 +159,21 @@
 (defpartial dummy-fields []
             [:div.control-group
              [:div.control-label (label "area" "Area: ")]
-             [:div.controls (text-field
-                                {:class "input-large"
-                                 :placeholder "area"} "area" )]]
+             [:div.controls [:input
+                                {:class "input-large" :type "text"
+                                 :pattern "([0-9])|([1-9][0-9])|([1-9][0-9][0-9])|(10[0-1][0-9])|(102[0-3])"
+                                 :title "0-1023" :required "required"
+                                 :placeholder "area" :autofocus "autofocus" :id "area"}]]]
             [:div.control-group
              [:div.control-label (label "key" "Key: ")]
              [:div.controls (text-field
                                 {:class "input-xxlarge"
+                                 :pattern (apply str (interpose "|"
+                                                                ["(\".*\")"
+                                                                 "([0-9]{1,})"
+                                                                 "(\\([.a-zA-Z]{1,} [0-9]{1,}\\))"
+                                                                 "(\\([.a-zA-Z]{1,} \".*\"\\))"]))
+                                 :required "required"
                                  :placeholder "e.g. \"key\", 123, (short 123), (long 123)"} "key" )]]
             [:div.control-group
              [:div.control-label (label "dummy-result" "Result: ")]
@@ -215,7 +223,7 @@
          (do
              (use 'lemon.views.welcome)
              (str (eval (read-string qstr)))))
-(defpage [:get "/monitor/area-json"] {:keys [eng cluster-name start-ns end-ns]}
+(defpage [:get "/monitor/ns-json"] {:keys [eng cluster-name start-ns end-ns]}
          (json/generate-string (monitor/get-status-of-ns-by-range
                   (monitor/get-tair eng cluster-name)
                   (Integer. start-ns)

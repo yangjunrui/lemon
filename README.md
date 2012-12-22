@@ -13,7 +13,7 @@ lein run
 
 ## License
 
-Copyright (C) 2011 FIXME
+Copyright (C) 2012-2013 dutor.
 
 Distributed under the Eclipse Public License, the same as Clojure.
 
