@@ -151,6 +151,7 @@
                [:option {:value "(.prefixPut tair 0 \"pkey\" \"skey\" \"value\")"}]
                [:option {:value "(.prefixDelete tair 0 \"pkey\" \"skey\")"}]
                [:option {:value "(.prefixIncr tair 0 \"pkey\" \"skey\" 1 0 0)"}]
+               [:option {:value "(.lazyRemoveArea tair 0)"}]
                ]]]
             [:div.control-group
              [:div.control-label (label "guru-result" "Result: ")]

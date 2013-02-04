@@ -8,8 +8,8 @@
 (defonce global-statistics (atom {}))
 
 (defn- connect-to-tair
-    ([cs-list group]
-     (let [tair (DefaultTairManager.)
+    ([cs-list group eng]
+     (let [tair (if (not= eng "rdb") (DefaultTairManager.) (DefaultExtendTairManager.))
            _ (doto tair
                  (.setConfigServerList cs-list)
                  (.setGroupName group)
@@ -18,9 +18,14 @@
 (defn get-tair
     [eng cluster-name]
     (defn- select-filter [{name :name}] (= name cluster-name))
-    (let [config (first (filter select-filter (clusters/clusters (keyword eng))))
-          {:keys [master slave group]} config]
-        (connect-to-tair [master slave] group)))
+    (let [t (@global-statistics (str eng cluster-name))]
+        (if (not (nil? t))
+            t
+            (let [config (first (filter select-filter (clusters/clusters (keyword eng))))
+                  {:keys [master slave group]} config
+                  new-t (connect-to-tair [master slave] group eng)]
+                (swap! global-statistics assoc (str eng cluster-name) new-t)
+                new-t))))
 
 (def Q-ns-cap (int 1))
 (def Q-mig-st (int 2))
